@@ -139,6 +139,8 @@
         player.spdX *= 0.9;
         player.y += player.spdY;
         player.spdY *= 0.98;
+		
+
 
 	//bounds
         if (player.x > width) {
@@ -167,6 +169,12 @@
                 return;
             }
         }
+		
+	//- end still_idle
+        if (controller.left.active || controller.right.active) {
+            player.idle_frame = 0;
+        }
+		
     //-idle transitions
     if (player.to_from_idle_frame >= 14) {
         player.idle = !player.idle;
@@ -229,27 +237,7 @@
             }
         }
 		
-	//- jump
-		//start jump
-        if (controller.up.active && !player.jumping) {
-            controller.up.active = false;
-            player.jumping = true;
-            player.spdY -=25;
-        }
-		//play jump
-        if (player.jumping) {
-            if (player.dir == 0 ) {
-                player.status="jump_left";
-                player.spdX -= 0.5;
-                player.animation.change(1,sprite_sheet.frame_sets[1], 5);
-                return;
-            } else {
-                player.status="jump_right";
-                player.spdX += 0.5;
-                player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
-                return;
-            }
-        }
+
         
 	//unlocked animations
 	//- go left
@@ -265,12 +253,13 @@
                 }
                 return;
             } else {
-                player.spdX -= 0.5;
+				if (player.dir == 0) {
+					player.spdX -= 0.5;
+				}
                 if (!player.jumping) {
                     if (player.dir == 0) {
                         player.status="walk_left";
                         player.animation.change(1,sprite_sheet.frame_sets[3], 5);
-                        player.dir = 0;
                     } else {
                         player.status="turn_left";
                         player.turning = true
@@ -294,12 +283,13 @@
                 }
                 return;
             } else {
-                player.spdX += 0.5;
+			    if (player.dir == 1) {
+					player.spdX += 0.5;
+				}
                 if (!player.jumping) {
                     if (player.dir == 1) {
                         player.status="walk_right";
-                        player.animation.change(0,sprite_sheet.frame_sets[2], 5);
-                        player.dir = 1;
+                        player.animation.change(0,sprite_sheet.frame_sets[2], 5);	
                     } else {
                         player.status="turn_right";
                         player.turning = true
@@ -311,12 +301,7 @@
             }
         }
 		
-	//- end still_idle
-        if (controller.left.active || controller.right.active || controller.up.active) {
-            player.idle = false;
-            player.to_from_idle_frame = 0;
-            player.idle_frame = 0;
-        }
+
 	//- start/continue still_idle
         if (!controller.left.active && !controller.right.active && !player.jumping && !player.turning) {
             player.spdX *= 0.9;
@@ -334,14 +319,38 @@
                 if (player.dir == 0) {
                     player.to_from_idle_frame += 1;
                     player.animation.change(1,sprite_sheet.frame_sets[0], 5);
-                    player.status="to_idle_left";
+                    player.status="to_idle_left_".concat(player.to_from_idle_frame);
                     return;
                 } else {
                     player.to_from_idle_frame += 1;
                     player.animation.change(0,sprite_sheet.frame_sets[1], 5); 
-                    player.status="to_idle_right";
+                    player.status="to_idle_right_".concat(player.to_from_idle_frame);
                     return;
                 }
+            }
+        }
+		
+	//- jump	
+		//start jump
+        if (controller.up.active && !player.jumping && !player.turning && !player.idle_ani) {
+            controller.up.active = false;
+            player.jumping = true;
+			player.idle = false;
+            player.spdY -=25;
+        }
+		
+		//play jump
+        if (player.jumping) {
+            if (player.dir == 0 ) {
+                player.status="jump_left";
+                player.spdX -= 0.5;
+                player.animation.change(1,sprite_sheet.frame_sets[1], 5);
+                return;
+            } else {
+                player.status="jump_right";
+                player.spdX += 0.5;
+                player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
+                return;
             }
         }
     }
@@ -414,9 +423,9 @@
     var playerList = {};
 
     createPlayer('1','Cat',50,height-100,120,80,0,0,"#d0d0d0");
- //    createPlayer('2','Cat2',100,height-100,120,80,4,0,"#707070");
-	// createPlayer('3','Cat3',300,height-100,120,80,4,0,"#707070");
-	// createPlayer('4','Cat4',500,height-100,120,80,4,0,"#707070");
+    //createPlayer('2','Cat2',100,height-100,120,80,4,0,"#707070");
+	//createPlayer('3','Cat3',300,height-100,120,80,4,0,"#707070");
+	//createPlayer('4','Cat4',500,height-100,120,80,4,0,"#707070");
 	
     // setInterval(gameLoop, 40);
 
