@@ -1,6 +1,6 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
-	var version = "1.1";
+	var version = "1.2";
 
     document.onmousemove = function(mouse) {
         var mouseX = mouse.clientX;
@@ -35,6 +35,49 @@
             }
         }
     };
+	
+			
+	mouseUpDown = function(event) {
+		var mouse_state = (event.type == "mousedown") ? true : false;
+		var mouseX = event.clientX;
+		var mouseY = event.clientY;
+		//console.log("X:".concat(mouseX));
+		//console.log("Y:".concat(mouseY));
+		
+		if (mouseX >= 30 && mouseX <= 60 && mouseY >= 30 && mouseY <= 60) {
+			controller.up.state = false;
+			controller.up.active = false;
+			controller.right.state = false;
+			controller.right.active = false;
+		
+			if (controller.left.state != mouse_state) controller.left.active = mouse_state;
+			controller.left.state = mouse_state;
+		} else if (mouseX >= 70 && mouseX <= 100 && mouseY >= 30 && mouseY <= 60) {
+			controller.left.state = false;
+			controller.left.active = false;
+			controller.right.state = false;
+			controller.right.active = false;
+		
+			if (controller.up.state != mouse_state) controller.up.active = mouse_state;
+			controller.up.state = mouse_state;
+		} else if (mouseX >= 110 && mouseX <= 140 && mouseY >= 30 && mouseY <= 60) {
+			controller.left.state = false;
+			controller.left.active = false;
+			controller.up.state = false;
+			controller.up.active = false;
+		
+			if (controller.right.state != mouse_state) controller.right.active = mouse_state;
+			controller.right.state = mouse_state;
+		} else {
+			controller.left.state = false;
+			controller.left.active = false;
+			controller.up.state = false;
+			controller.up.active = false;
+			controller.right.state = false;
+			controller.right.active = false;
+		}
+	}
+		
 
     function updatePlayers() {
         for (var key1 in playerList) {
@@ -470,6 +513,10 @@
     window.addEventListener("keydown", controller.keyUpDown);
     window.addEventListener("keyup", controller.keyUpDown);
 	//window.addEventListener('resize', resizeCanvas, false);
+	
+	window.addEventListener("mousedown", mouseUpDown);
+	window.addEventListener("mouseup", mouseUpDown);
+	
 
     var ctx = document.getElementById("ctx").getContext("2d");
 	//resizeCanvas();
