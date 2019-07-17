@@ -55,17 +55,72 @@
     }
 
     function reDraw() {
-        ctx.clearRect(0,0,width,height)
+        //clear canvas
+		ctx.clearRect(0,0,width,height)
+		
+		//draw ui
+		ctx.strokeStyle = "rgb(200, 200, 200)";
+		roundRect(ctx, 20, 20, 30, 30);
+		roundRect(ctx, 60, 20, 30, 30);
+		roundRect(ctx, 100, 20, 30, 30);
+		ctx.fillStyle = "rgb(200, 200, 200)";
+		ctx.font = "bold 20px Arial"
+		ctx.fillText("<",28,42);
+		ctx.fillText(">",110,42);
+		ctx.font = "28px Arial"
+		ctx.fillText("^",68,49);
+		ctx.font = "16px Arial"
+		ctx.fillText("cat_simulator_v1.0",width-148,30);
+		
+		//draw other players
+		ctx.fillStyle = "#707070";
+		ctx.font = "16px Arial"
         for (var key in playerList) {
             if (key != '1') {
                 playerList[key].animation.update();
                 playerList[key].render();
             }
         }
+		
+		//draw control player
         playerList['1'].animation.update();
         playerList['1'].render();
     }
 
+	function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+	  if (typeof stroke == 'undefined') {
+		stroke = true;
+	  }
+	  if (typeof radius === 'undefined') {
+		radius = 5;
+	  }
+	  if (typeof radius === 'number') {
+		radius = {tl: radius, tr: radius, br: radius, bl: radius};
+	  } else {
+		var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+		for (var side in defaultRadius) {
+		  radius[side] = radius[side] || defaultRadius[side];
+		}
+	  }
+	  ctx.beginPath();
+	  ctx.moveTo(x + radius.tl, y);
+	  ctx.lineTo(x + width - radius.tr, y);
+	  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+	  ctx.lineTo(x + width, y + height - radius.br);
+	  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+	  ctx.lineTo(x + radius.bl, y + height);
+	  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+	  ctx.lineTo(x, y + radius.tl);
+	  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+	  ctx.closePath();
+	  if (fill) {
+		ctx.fill();
+	  }
+	  if (stroke) {
+		ctx.stroke();
+	  }
+	}
+	
     function createPlayer(id,name,x,y,width,height,spdX,spdY,color) {
         var player = {
             x:x,
@@ -412,8 +467,10 @@
 //initialize
     window.addEventListener("keydown", controller.keyUpDown);
     window.addEventListener("keyup", controller.keyUpDown);
+	//window.addEventListener('resize', resizeCanvas, false);
 
     var ctx = document.getElementById("ctx").getContext("2d");
+	//resizeCanvas();
 
     ctx.font = "16px Arial"
     ctx.fillStyle = "#707070";
