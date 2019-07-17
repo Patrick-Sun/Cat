@@ -1,5 +1,7 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
+	var version = "1.1";
+
     document.onmousemove = function(mouse) {
         var mouseX = mouse.clientX;
         var mouseY = mouse.clientY;
@@ -70,7 +72,7 @@
 		ctx.font = "28px Arial"
 		ctx.fillText("^",68,49);
 		ctx.font = "16px Arial"
-		ctx.fillText("cat_simulator_v1.0",width-148,30);
+		ctx.fillText("cat_simulator_v".concat(version),width-148,30);
 		
 		//draw other players
 		ctx.fillStyle = "#707070";
