@@ -115,14 +115,14 @@
 		
 		ctx.font = "bold 40px Arial"
 		
-		if (controller.left.active) {
+		if (controller.left.state) {
 			ctx.fillStyle = "rgb(200, 40, 40)";
 		} else {
 			ctx.fillStyle = "rgb(200, 200, 200)";
 		}
 		ctx.fillText("<",38,height-46);
 		
-		if (controller.right.active) {
+		if (controller.right.state) {
 			ctx.fillStyle = "rgb(200, 40, 40)";
 		} else {
 			ctx.fillStyle = "rgb(200, 200, 200)";
