@@ -1,6 +1,6 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
-	var version = "1.1";
+	var version = "1.2";
 
     document.onmousemove = function(mouse) {
         var mouseX = mouse.clientX;
@@ -44,7 +44,7 @@
 		//console.log("X:".concat(mouseX));
 		//console.log("Y:".concat(mouseY));
 		
-		if (mouseX >= 30 && mouseX <= 60 && mouseY >= 30 && mouseY <= 60) {
+		if (mouseX >= 20 && mouseX <= 80 && mouseY >= height-20-80 && mouseY <= height-20) {
 			controller.up.state = false;
 			controller.up.active = false;
 			controller.right.state = false;
@@ -52,15 +52,7 @@
 		
 			if (controller.left.state != mouse_state) controller.left.active = mouse_state;
 			controller.left.state = mouse_state;
-		} else if (mouseX >= 70 && mouseX <= 100 && mouseY >= 30 && mouseY <= 60) {
-			controller.left.state = false;
-			controller.left.active = false;
-			controller.right.state = false;
-			controller.right.active = false;
-		
-			if (controller.up.state != mouse_state) controller.up.active = mouse_state;
-			controller.up.state = mouse_state;
-		} else if (mouseX >= 110 && mouseX <= 140 && mouseY >= 30 && mouseY <= 60) {
+		} else if (mouseX >= 100 && mouseX <= 160 && mouseY >= height-20-80 && mouseY <= height-20) {
 			controller.left.state = false;
 			controller.left.active = false;
 			controller.up.state = false;
@@ -68,6 +60,14 @@
 		
 			if (controller.right.state != mouse_state) controller.right.active = mouse_state;
 			controller.right.state = mouse_state;
+		} else if (mouseX >= width-20-60 && mouseX <= width-20 && mouseY >= height-20-80 && mouseY <= height-20) {
+			controller.left.state = false;
+			controller.left.active = false;
+			controller.right.state = false;
+			controller.right.active = false;
+		
+			if (controller.up.state != mouse_state) controller.up.active = mouse_state;
+			controller.up.state = mouse_state;
 		} else {
 			controller.left.state = false;
 			controller.left.active = false;
@@ -105,15 +105,15 @@
 		
 		//draw ui
 		ctx.strokeStyle = "rgb(200, 200, 200)";
-		roundRect(ctx, 20, 20, 30, 30);
-		roundRect(ctx, 60, 20, 30, 30);
-		roundRect(ctx, 100, 20, 30, 30);
-		ctx.fillStyle = "rgb(200, 200, 200)";
-		ctx.font = "bold 20px Arial"
-		ctx.fillText("<",28,42);
-		ctx.fillText(">",110,42);
-		ctx.font = "28px Arial"
-		ctx.fillText("^",68,49);
+		roundRect(ctx, 20, height-20-80, 60, 80);
+		roundRect(ctx, 100, height-20-80, 60, 80);
+		roundRect(ctx, width-20-60, height-20-80, 60, 80);
+		ctx.fillStyle = "rgb(220, 220, 220)";
+		ctx.font = "bold 40px Arial"
+		ctx.fillText("<",38,height-46);
+		ctx.fillText(">",120,height-46);
+		ctx.font = "56px Arial"
+		ctx.fillText("^",width-63, height-32);
 		ctx.font = "16px Arial"
 		ctx.fillText("cat_simulator_v".concat(version),width-148,30);
 		
@@ -522,6 +522,7 @@
             }
         }
     };
+	
 
 //initialize
     window.addEventListener("keydown", controller.keyUpDown);
@@ -529,7 +530,9 @@
 	//window.addEventListener('resize', resizeCanvas, false);
 	
 	window.addEventListener("mousedown", mouseUpDown);
-	window.addEventListener("mouseup", mouseUpDown);	
+	window.addEventListener("mouseup", mouseUpDown);
+
+	
 
     var ctx = document.getElementById("ctx").getContext("2d");
 	//resizeCanvas();
