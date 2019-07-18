@@ -1,6 +1,6 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
-	var version = "1.2";
+	var version = "1.1";
 
     document.onmousemove = function(mouse) {
         var mouseX = mouse.clientX;
@@ -435,23 +435,37 @@
         if (controller.up.active && !player.jumping && !player.turning && !player.idle_ani) {
             controller.up.active = false;
             player.jumping = true;
-			player.idle = false;
+			//player.idle = false;
             player.spdY -=25;
         }
 		
 		//play jump
         if (player.jumping) {
-            if (player.dir == 0 ) {
-                player.status="jump_left";
-                player.spdX -= 0.5;
-                player.animation.change(1,sprite_sheet.frame_sets[1], 5);
-                return;
-            } else {
-                player.status="jump_right";
-                player.spdX += 0.5;
-                player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
-                return;
-            }
+			if (player.idle) {
+				if (player.dir == 0 ) {
+					player.status="idle_jump_left";
+					player.spdX -= 0.5;
+					player.animation.change(1,sprite_sheet.frame_sets[1], 5);
+					return;
+				} else {
+					player.status="idle_jump_right";
+					player.spdX += 0.5;
+					player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
+					return;
+				}
+			} else {
+				if (player.dir == 0 ) {
+					player.status="jump_left";
+					player.spdX -= 0.5;
+					player.animation.change(1,sprite_sheet.frame_sets[1], 5);
+					return;
+				} else {
+					player.status="jump_right";
+					player.spdX += 0.5;
+					player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
+					return;
+				}
+			}
         }
     }
 
@@ -508,6 +522,14 @@
             }
         }
     };
+	
+	function getTouchPos(touchEvent) {
+		return {
+		x: touchEvent.touches[0].clientX,
+		y: touchEvent.touches[0].clientY
+		playerList['1'].status = "ZZZZZZZZZZZZZZZZZ"
+	  };
+	}
 
 //initialize
     window.addEventListener("keydown", controller.keyUpDown);
@@ -516,6 +538,22 @@
 	
 	window.addEventListener("mousedown", mouseUpDown);
 	window.addEventListener("mouseup", mouseUpDown);
+	
+	
+	window.addEventListener("touchstart", function (e) {
+        mousePos = getTouchPos(e);
+		var touch = e.touches[0];
+		var mouseEvent = new MouseEvent("mousedown", {
+		clientX: touch.clientX,
+		clientY: touch.clientY
+	  });
+	  window.dispatchEvent(mouseEvent);
+	}, false);
+	window.addEventListener("touchend", function (e) {
+		var mouseEvent = new MouseEvent("mouseup", {});
+		window.dispatchEvent(mouseEvent);
+	}, false);
+
 	
 
     var ctx = document.getElementById("ctx").getContext("2d");
