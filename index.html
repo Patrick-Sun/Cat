@@ -206,7 +206,7 @@
             to_from_idle_frame:0,
             turning:false,
             turn_frame:0,
-            idle:false,
+            idle:true,
             idle_frame:0,
             idle_ani:false,
             idle_ani_frame:0,
@@ -367,10 +367,10 @@
             if (player.idle) {
                 player.to_from_idle_frame += 1;
                 if (player.dir == 1) {
-                    player.animation.change(0,sprite_sheet.frame_sets[1], 5);
+                    player.animation.change(6,sprite_sheet.frame_sets[7], 5);
                     player.status="from_idle_right";
                 } else {
-                    player.animation.change(1,sprite_sheet.frame_sets[0], 5);
+                    player.animation.change(7,sprite_sheet.frame_sets[7], 5);
                     player.status="from_idle_left";
                 }
                 return;
@@ -397,10 +397,10 @@
             if (player.idle) {
                 player.to_from_idle_frame += 1;
                 if (player.dir == 1) {
-                    player.animation.change(0,sprite_sheet.frame_sets[1], 5);
+                    player.animation.change(6,sprite_sheet.frame_sets[7], 5);
                     player.status="from_idle_right";
                 } else {
-                    player.animation.change(1,sprite_sheet.frame_sets[0], 5);
+                    player.animation.change(7,sprite_sheet.frame_sets[7], 5);
                     player.status="from_idle_left";
                 }
                 return;
@@ -429,23 +429,23 @@
             player.spdX *= 0.9;
             if (player.idle) {
                 if (player.dir == 0) {
-                    player.animation.change(1,sprite_sheet.frame_sets[0], 5);
+                    player.animation.change(5,sprite_sheet.frame_sets[0], 15);
                     player.status="idle_left - ".concat(player.idle_frame);
                     player.idle_frame += 1;
                 } else {
-                    player.animation.change(0,sprite_sheet.frame_sets[1], 5); 
+                    player.animation.change(4,sprite_sheet.frame_sets[0], 15); 
                     player.status="idle_right - ".concat(player.idle_frame);
                     player.idle_frame += 1;
                 }
             } else {
                 if (player.dir == 0) {
                     player.to_from_idle_frame += 1;
-                    player.animation.change(1,sprite_sheet.frame_sets[0], 5);
+                    player.animation.change(7,sprite_sheet.frame_sets[6], 5);
                     player.status="to_idle_left_".concat(player.to_from_idle_frame);
                     return;
                 } else {
                     player.to_from_idle_frame += 1;
-                    player.animation.change(0,sprite_sheet.frame_sets[1], 5); 
+                    player.animation.change(6,sprite_sheet.frame_sets[6], 5); 
                     player.status="to_idle_right_".concat(player.to_from_idle_frame);
                     return;
                 }
@@ -467,12 +467,12 @@
 				if (player.dir == 0 ) {
 					player.status="idle_jump_left";
 					player.spdX -= 0.5;
-					player.animation.change(1,sprite_sheet.frame_sets[1], 5);
+					player.animation.change(1,[0], 5);
 					return;
 				} else {
 					player.status="idle_jump_right";
 					player.spdX += 0.5;
-					player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
+					player.animation.change(0,[0], 5); 
 					return;
 				}
 			} else {
@@ -484,7 +484,7 @@
 				} else {
 					player.status="jump_right";
 					player.spdX += 0.5;
-					player.animation.change(0,sprite_sheet.frame_sets[0], 5); 
+					player.animation.change(0,sprite_sheet.frame_sets[1], 5); 
 					return;
 				}
 			}
@@ -499,12 +499,15 @@
     }
 
     var sprite_sheet = {
-        frame_sets:[[0],                        //0.idle right  [0]
-                    [0],                        //1.idle left   [1]
+        frame_sets:[[0,1,2,1],                  //0.idle        [4|5]
+                    [0],                        //1.jump        [*]
                     [0,1,2,3,4,5,6,7],          //2.walk right  [0]
                     [7,6,5,4,3,2,1,0],          //3.walk left   [1]
                     [0,1,2,3,4,4,4,4,4],        //4.turn left   [2]
-                    [0,1,2,3,4,4,4,4,4]],       //5.turn right  [3]
+                    [0,1,2,3,4,4,4,4,4],        //5.turn right  [3]
+                    [0,1,2,3,3,3],              //6.to idle right [6|7]
+                    [3,2,1,0,0,0]],             //7.from idle right [6|7]
+
         image:new Image()
     };
 
@@ -601,6 +604,6 @@ function getTouchPos(touchEvent) {
 
     sprite_sheet.image.addEventListener("load", gameLoop);
     //sprite_sheet.image.src = "cat_sprite_4.png";
-    sprite_sheet.image.src = "cat_sprite_grey.png";
+    sprite_sheet.image.src = "cat_sprite_orange.png";
 
 </script>
