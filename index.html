@@ -44,37 +44,25 @@
 		//console.log("X:".concat(mouseX));
 		//console.log("Y:".concat(mouseY));
 		
-		if (mouseX >= 20 && mouseX <= 80 && mouseY >= height-20-80 && mouseY <= height-20) {
+			controller.left.state = false;
+			controller.left.active = false;
 			controller.up.state = false;
 			controller.up.active = false;
 			controller.right.state = false;
 			controller.right.active = false;
 		
+		
+		if (mouseX >= 20 && mouseX <= 80 && mouseY >= height-20-80 && mouseY <= height-20) {
 			if (controller.left.state != mouse_state) controller.left.active = mouse_state;
 			controller.left.state = mouse_state;
-		} else if (mouseX >= 100 && mouseX <= 160 && mouseY >= height-20-80 && mouseY <= height-20) {
-			controller.left.state = false;
-			controller.left.active = false;
-			controller.up.state = false;
-			controller.up.active = false;
-		
+		}
+		if (mouseX >= 100 && mouseX <= 160 && mouseY >= height-20-80 && mouseY <= height-20) {	
 			if (controller.right.state != mouse_state) controller.right.active = mouse_state;
 			controller.right.state = mouse_state;
-		} else if (mouseX >= width-20-60 && mouseX <= width-20 && mouseY >= height-20-80 && mouseY <= height-20) {
-			controller.left.state = false;
-			controller.left.active = false;
-			controller.right.state = false;
-			controller.right.active = false;
-		
+		}
+		if (mouseX >= width-20-60 && mouseX <= width-20 && mouseY >= height-20-80 && mouseY <= height-20) {		
 			if (controller.up.state != mouse_state) controller.up.active = mouse_state;
 			controller.up.state = mouse_state;
-		} else {
-			controller.left.state = false;
-			controller.left.active = false;
-			controller.up.state = false;
-			controller.up.active = false;
-			controller.right.state = false;
-			controller.right.active = false;
 		}
 	}
 		
