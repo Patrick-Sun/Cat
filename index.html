@@ -522,14 +522,6 @@
             }
         }
     };
-	
-	function getTouchPos(touchEvent) {
-			playerList['1'].status = "ZZZZZZZZZZZZZZZZZ";
-		return {
-		x: touchEvent.touches[0].clientX,
-		y: touchEvent.touches[0].clientY
-	  };
-	}
 
 //initialize
     window.addEventListener("keydown", controller.keyUpDown);
@@ -537,24 +529,7 @@
 	//window.addEventListener('resize', resizeCanvas, false);
 	
 	window.addEventListener("mousedown", mouseUpDown);
-	window.addEventListener("mouseup", mouseUpDown);
-	
-	
-	window.addEventListener("touchstart", function (e) {
-        mousePos = getTouchPos(e);
-		var touch = e.touches[0];
-		var mouseEvent = new MouseEvent("mousedown", {
-		clientX: touch.clientX,
-		clientY: touch.clientY
-	  });
-	  window.dispatchEvent(mouseEvent);
-	}, false);
-	window.addEventListener("touchend", function (e) {
-		var mouseEvent = new MouseEvent("mouseup", {});
-		window.dispatchEvent(mouseEvent);
-	}, false);
-
-	
+	window.addEventListener("mouseup", mouseUpDown);	
 
     var ctx = document.getElementById("ctx").getContext("2d");
 	//resizeCanvas();
