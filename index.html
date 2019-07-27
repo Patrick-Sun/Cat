@@ -91,6 +91,20 @@
         //clear canvas
 		ctx.clearRect(0,0,width,height)
 		
+		//draw instructions
+		ctx.strokeStyle = "rgb(200, 200, 200)"
+		roundRect(ctx, 20, 40, 25, 25)
+		roundRect(ctx, 55, 40, 25, 25)
+		roundRect(ctx, 90, 40, 25, 25)
+		ctx.font = "16px Arial"
+		ctx.fillStyle = "rgb(200, 200, 200)";
+		ctx.fillText("Controls",20, 30);
+		ctx.font = "bold 16px Arial"
+		ctx.fillText("<",28,58);
+		ctx.fillText(">",63,58);
+		ctx.font = "20px Arial"
+		ctx.fillText("^",98,63);
+
 		//draw ui
 		// if (controller.left.active) {
 		// 	ctx.strokeStyle = "rgb(200, 40, 40)";
