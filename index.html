@@ -98,12 +98,22 @@
 		roundRect(ctx, 90, 40, 25, 25)
 		ctx.font = "16px Arial"
 		ctx.fillStyle = "rgb(200, 200, 200)";
-		ctx.fillText("Controls",20, 30);
+		ctx.fillText("controls",20, 30);
 		ctx.font = "bold 16px Arial"
 		ctx.fillText("<",28,58);
 		ctx.fillText(">",63,58);
 		ctx.font = "20px Arial"
 		ctx.fillText("^",98,63);
+
+		//draw ground
+		ctx.strokeStyle = "rgb(230, 230, 230)"
+		ctx.moveTo(0, height-42);
+		ctx.lineTo(width, height-42);
+		ctx.stroke();
+
+		//draw shadow
+		ctx.fillStyle = "rgb(240, 240, 240)";
+		drawEllipse(ctx, playerList['1'].x+(playerList['1'].width/2)-(100*(1-(height-100-playerList['1'].y)/(height-100)))/2, height-28-(12*(1-(height-100-(50)-playerList['1'].y)/(height-100-(50))))/2, 100*(1-(height-100-playerList['1'].y)/(height-100)), 12*(1-(height-100-(50)-playerList['1'].y)/(height-100-(50))));
 
 		//draw ui
 		// if (controller.left.active) {
@@ -202,6 +212,25 @@
 	  if (stroke) {
 		ctx.stroke();
 	  }
+	}
+
+	function drawEllipse(ctx, x, y, w, h) {
+	  var kappa = .5522848,
+	      ox = (w / 2) * kappa, // control point offset horizontal
+	      oy = (h / 2) * kappa, // control point offset vertical
+	      xe = x + w,           // x-end
+	      ye = y + h,           // y-end
+	      xm = x + w / 2,       // x-middle
+	      ym = y + h / 2;       // y-middle
+
+	  ctx.beginPath();
+	  ctx.moveTo(x, ym);
+	  ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+	  ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+	  ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+	  ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+	  //ctx.closePath(); // not used correctly, see comments (use to close off open path)
+	  ctx.fill();
 	}
 	
     function createPlayer(id,name,x,y,width,height,spdX,spdY,color) {
