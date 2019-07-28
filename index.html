@@ -1,6 +1,6 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
-	var version = "1.9";
+	var version = "2.0";
 
     document.onmousemove = function(mouse) {
         var mouseX = mouse.clientX;
@@ -260,7 +260,8 @@
         };
 
         player.render = function () {
-            //ctx.fillText(name,player.x,player.y-36)
+            // ctx.fillText(player.animation.frame,player.x,player.y-36)
+            // ctx.fillText(name,player.x,player.y-36)
             //ctx.fillText(player.status,player.x,player.y-20)
             ctx.drawImage(
                 sprite_sheet.image,
@@ -355,7 +356,7 @@
 		if (player.idle_ani_type == 1) {
 			idle_ani_length = 20;
 		} else {
-			idle_ani_length = 120;
+			idle_ani_length = 85;
 		}
 		//continue/end idle animation
         if (player.idle_ani) {
@@ -371,7 +372,7 @@
         if (!player.idle_ani && player.idle_frame > 300) {
 			var random = Math.floor(Math.random() * (100 - 1)) + 1;
 			
-			if (random <= 80) {
+			if (random <= 50) {
 				player.idle_ani_type = 1;
 			} else {
 				player.idle_ani_type = 2;
@@ -388,8 +389,8 @@
 					player.status="ear_twitch_left";
 					player.animation.change(8,sprite_sheet.frame_sets[9], 5);
 				} else {
-					player.status="idle_ani_left_2";
-					player.animation.change(1,[4], 5);
+					player.status="lick_left";
+					player.animation.change(14,sprite_sheet.frame_sets[11], 5); 
 				}
                 return;
             } else {
@@ -397,8 +398,8 @@
 					player.status="ear_twitch_right";
 					player.animation.change(8,sprite_sheet.frame_sets[8], 5);
 				} else {
-					player.status="idle_ani_right_2";
-					player.animation.change(0,[4], 5); 
+					player.status="lick_right";
+					player.animation.change(13,sprite_sheet.frame_sets[11], 5); 
 				}
 				return;
             }
@@ -514,12 +515,14 @@
 				if (player.dir == 0 ) {
 					player.status="idle_jump_left";
 					player.spdX -= 0.5;
-					player.animation.change(1,[0], 5);
+					player.animation.change(12,sprite_sheet.frame_sets[10], 3);
+					player.idle_ani_frame = 0;
 					return;
 				} else {
 					player.status="idle_jump_right";
 					player.spdX += 0.5;
-					player.animation.change(0,[0], 5); 
+					player.animation.change(11,sprite_sheet.frame_sets[1], 3); 
+					player.idle_ani_frame = 0
 					return;
 				}
 			} else {
@@ -547,16 +550,17 @@
 
     var sprite_sheet = {
         frame_sets:[[0,1,2,1],                  //0.idle        [4|5]
-                    [0,1,2,3,4,5,6],			//1.jump right  [9]
+                    [0,1,2,3,4,5,6],			//1.jump right  [9|11]
                     [0,1,2,3,4,5,6,7],          //2.walk right  [0]
                     [7,6,5,4,3,2,1,0],          //3.walk left   [1]
                     [0,1,2,3,4,4,4,4,4],        //4.turn left   [2]
                     [0,1,2,3,4,4,4,4,4],        //5.turn right  [3]
                     [0,1,2,3,3,3],              //6.to idle right [6|7]
                     [3,2,1,0,0,0],              //7.from idle right [6|7]
-                    [0,1,0,1,0,1,0,1],          //8.ear twitch right (idle_1) [8]
-                    [2,3,2,3,2,3,2,3],          //9.ear twitch left (idle_1) [8] 
-                   	[6,5,4,3,2,1,0]],			//10.jump left 	[10]
+                    [0,1,0,1],          		//8.ear twitch right (idle_1) [8]
+                    [2,3,2,3],          		//9.ear twitch left (idle_1) [8] 
+                   	[6,5,4,3,2,1,0],			//10.jump left 	[10|12]
+                   	[0,1,2,3,3,4,5,6,7,7,8,9,10,11,12,1,0]],	//11.lick [13|14]
 
         image:new Image()
     };
