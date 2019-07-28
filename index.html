@@ -410,7 +410,7 @@
 	//unlocked animations
 	//- go left
         if (controller.left.active) {
-            if (player.idle) {
+            if (player.idle & !player.jumping) {
                 player.to_from_idle_frame += 1;
                 if (player.dir == 1) {
                     player.animation.change(6,sprite_sheet.frame_sets[7], 5);
@@ -421,7 +421,7 @@
                 }
                 return;
             } else {
-				if (player.dir == 0) {
+				if (player.dir == 0 & !player.idle) {
 					player.spdX -= 0.5;
 				}
                 if (!player.jumping) {
@@ -440,7 +440,7 @@
         }
 	//- go right
         if (controller.right.active) {
-            if (player.idle) {
+            if (player.idle & !player.jumping) {
                 player.to_from_idle_frame += 1;
                 if (player.dir == 1) {
                     player.animation.change(6,sprite_sheet.frame_sets[7], 5);
@@ -451,7 +451,7 @@
                 }
                 return;
             } else {
-			    if (player.dir == 1) {
+			    if (player.dir == 1 & !player.idle) {
 					player.spdX += 0.5;
 				}
                 if (!player.jumping) {
@@ -516,13 +516,13 @@
 					player.status="idle_jump_left";
 					player.spdX -= 0.5;
 					player.animation.change(12,sprite_sheet.frame_sets[10], 3);
-					player.idle_ani_frame = 0;
+					player.idle_frame = 0;
 					return;
 				} else {
 					player.status="idle_jump_right";
 					player.spdX += 0.5;
 					player.animation.change(11,sprite_sheet.frame_sets[1], 3); 
-					player.idle_ani_frame = 0
+					player.idle_frame = 0
 					return;
 				}
 			} else {
