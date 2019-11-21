@@ -1,13 +1,6 @@
 <canvas id="ctx" width="1000" height="300" style="border:1px solid #d0d0d0; border-radius: 5px;"></canvas>
 <script>
-	var version = "2.0";
-
-    document.onmousemove = function(mouse) {
-        var mouseX = mouse.clientX;
-        var mouseY = mouse.clientY;
-        //playerList['1'].x = mouseX;
-        //playerList['1'].y = mouseY;
-    }
+	var version = "3.0";
 
     var controller = {
         left:  { active:false, state:false },
@@ -65,6 +58,40 @@
 			controller.up.state = mouse_state;
 		}
 	}
+
+	touchHandler = function(event) {
+		if (event.touches) {
+			touchList = {};
+			for (var i in event.touches) {
+				touchList[i] = [event.touches[i].pageX - canvas.offsetLeft, event.touches[i].pageY - canvas.offsetTop];
+			}
+		}
+
+		controller.left.state = false;
+		controller.left.active = false;
+		controller.up.state = false;
+		controller.up.active = false;
+		controller.right.state = false;
+		controller.right.active = false;
+
+		for (i in touchList) {
+			touchX = touchList[i][0];
+			touchY = touchList[i][1];
+
+		if (touchX >= 20 && touchX <= 80 && touchY >= height-20-80 && touchY <= height-20) {
+				if (controller.left.state != true) controller.left.active = true;
+				controller.left.state = true;
+			}
+			if (touchX >= 100 && touchX <= 160 && touchY >= height-20-80 && touchY <= height-20) {	
+				if (controller.right.state != true) controller.right.active = true;
+				controller.right.state = true;
+			}
+			if (touchX >= width-20-60 && touchX <= width-20 && touchY >= height-20-80 && touchY <= height-20) {		
+				if (controller.up.state != true) controller.up.active = true;
+				controller.up.state = true;
+			}
+		}
+	}
 		
 
     function updatePlayers() {
@@ -92,18 +119,18 @@
 		ctx.clearRect(0,0,width,height)
 		
 		//draw instructions
-		ctx.strokeStyle = "rgb(200, 200, 200)"
-		roundRect(ctx, 20, 40, 25, 25)
-		roundRect(ctx, 55, 40, 25, 25)
-		roundRect(ctx, 90, 40, 25, 25)
-		ctx.font = "16px Arial"
-		ctx.fillStyle = "rgb(200, 200, 200)";
-		ctx.fillText("controls",20, 30);
-		ctx.font = "bold 16px Arial"
-		ctx.fillText("<",28,58);
-		ctx.fillText(">",63,58);
-		ctx.font = "20px Arial"
-		ctx.fillText("^",98,63);
+		// ctx.strokeStyle = "rgb(200, 200, 200)"
+		// roundRect(ctx, 20, 40, 25, 25)
+		// roundRect(ctx, 55, 40, 25, 25)
+		// roundRect(ctx, 90, 40, 25, 25)
+		// ctx.font = "16px Arial"
+		// ctx.fillStyle = "rgb(200, 200, 200)";
+		// ctx.fillText("controls",20, 30);
+		// ctx.font = "bold 16px Arial"
+		// ctx.fillText("<",28,58);
+		// ctx.fillText(">",63,58);
+		// ctx.font = "20px Arial"
+		// ctx.fillText("^",98,63);
 
 		//draw ground
 		ctx.strokeStyle = "rgb(230, 230, 230)"
@@ -116,54 +143,56 @@
 		drawEllipse(ctx, playerList['1'].x+(playerList['1'].width/2)-(100*(1-(height-100-playerList['1'].y)/(height-100)))/2, height-28-(12*(1-(height-100-(50)-playerList['1'].y)/(height-100-(50))))/2, 100*(1-(height-100-playerList['1'].y)/(height-100)), 12*(1-(height-100-(50)-playerList['1'].y)/(height-100-(50))));
 
 		//draw ui
-		// if (controller.left.active) {
-		// 	ctx.strokeStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.strokeStyle = "rgb(200, 200, 200)";
-		// }
-		// roundRect(ctx, 20, height-20-80, 60, 80);
+		if (controller.left.active) {
+			ctx.strokeStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.strokeStyle = "rgb(200, 200, 200)";
+		}
+		roundRect(ctx, 20, height-20-80, 60, 80);
 		
-		// if (controller.right.active) {
-		// 	ctx.strokeStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.strokeStyle = "rgb(200, 200, 200)";
-		// }
-		// roundRect(ctx, 100, height-20-80, 60, 80);
+		if (controller.right.active) {
+			ctx.strokeStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.strokeStyle = "rgb(200, 200, 200)";
+		}
+		roundRect(ctx, 100, height-20-80, 60, 80);
 		
-		// if (playerList['1'].jumping) {
-		// 	ctx.strokeStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.strokeStyle = "rgb(200, 200, 200)";
-		// }
-		// roundRect(ctx, width-20-60, height-20-80, 60, 80);
+		if (playerList['1'].jumping) {
+			ctx.strokeStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.strokeStyle = "rgb(200, 200, 200)";
+		}
+		roundRect(ctx, width-20-60, height-20-80, 60, 80);
 		
-		// ctx.font = "bold 40px Arial"
+		ctx.font = "bold 40px Arial"
 		
-		// if (controller.left.state) {
-		// 	ctx.fillStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.fillStyle = "rgb(200, 200, 200)";
-		// }
-		// ctx.fillText("<",38,height-46);
+		if (controller.left.state) {
+			ctx.fillStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.fillStyle = "rgb(200, 200, 200)";
+		}
+		ctx.fillText("<",38,height-46);
 		
-		// if (controller.right.state) {
-		// 	ctx.fillStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.fillStyle = "rgb(200, 200, 200)";
-		// }
-		// ctx.fillText(">",120,height-46);
-		// ctx.font = "56px Arial"
-		// if (playerList['1'].jumping) {
-		// 	ctx.fillStyle = "rgb(200, 40, 40)";
-		// } else {
-		// 	ctx.fillStyle = "rgb(200, 200, 200)";
-		// }
-		// ctx.fillText("^",width-63, height-32);
+		if (controller.right.state) {
+			ctx.fillStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.fillStyle = "rgb(200, 200, 200)";
+		}
+		ctx.fillText(">",120,height-46);
+		ctx.font = "56px Arial"
+		if (playerList['1'].jumping) {
+			ctx.fillStyle = "rgb(60, 60, 60)";
+		} else {
+			ctx.fillStyle = "rgb(200, 200, 200)";
+		}
+		ctx.fillText("^",width-63, height-32);
 
 		ctx.font = "16px Arial"
 		ctx.fillStyle = "rgb(200, 200, 200)";
-		ctx.fillText("cat_simulator_v".concat(version),width-148,30);
-		ctx.fillText(playerList['1'].status,width-148,50);
+		// ctx.fillText("cat_simulator_v".concat(version),width-148,30);
+		// ctx.fillText(playerList['1'].status,width-148,50);
+		ctx.fillText("cat_simulator_v".concat(version),20,30);
+		ctx.fillText("state: " + playerList['1'].status,20,50);
 		
 		//draw other players
 		ctx.fillStyle = "#707070";
@@ -256,6 +285,11 @@
             idle_ani:false,
             idle_ani_frame:0,
 			idle_ani_type:0,
+			sleep_frame:0,
+			sleeping:false,
+			to_sleep_frame:0,
+			from_sleep_frame:0,
+			waking:true,
 			status:"loading..."
         };
 
@@ -263,6 +297,12 @@
             // ctx.fillText(player.animation.frame,player.x,player.y-36)
             // ctx.fillText(name,player.x,player.y-36)
             //ctx.fillText(player.status,player.x,player.y-20)
+            // touchString = ""
+            // for (i in touchList) {
+            // 	touchString = touchString + "[" + touchList[i][0] + "," + touchList[i][1] + "]";
+            // }
+            // ctx.fillText(touchString, player.x, player.y - 20);
+
             ctx.drawImage(
                 sprite_sheet.image,
                 player.animation.frame * this.width,
@@ -322,6 +362,61 @@
             player.y = height - 100;
             player.spdY = 0;
         }
+
+    //sleep
+	    if (player.idle) {
+	    	player.sleep_frame += 1;
+	    }
+	    if (player.sleep && !player.waking) {
+			player.dir = 1;
+	    	player.status = "sleep_right";
+			player.animation.change(16,sprite_sheet.frame_sets[13], 5); 
+			player.idle_frame = 0;
+	    } 
+	    if (player.waking) {
+	    	if (player.from_sleep_frame <= 100) {
+		    	if (player.dir == 0) {
+		    		//NA
+	    		} else {
+		    		player.status = "waking_right";
+					player.animation.change(18,sprite_sheet.frame_sets[15], 5); 
+	    		}
+		    	player.from_sleep_frame += 1;
+
+		    	return;
+		    } else {
+	    		player.sleep = false;
+	    		player.waking = false;
+	    		player.from_sleep_frame = 0;
+		    }
+	    }
+
+	    if (player.sleep_frame >= 1000 && !player.idle_anie && !player.sleep) {
+	    	if (player.dir == 0 && player.to_sleep_frame <= 65) {
+		    	player.status = "to_sleep_left";
+				player.animation.change(17,sprite_sheet.frame_sets[14], 5);
+		    	player.to_sleep_frame += 1;
+	    		return;
+	    	} else if (player.dir == 1 && player.to_sleep_frame <= 90) {
+	    		player.status = "to_sleep_right";
+		    	player.animation.change(15,sprite_sheet.frame_sets[12], 5); 
+		    	player.to_sleep_frame += 1;
+	    		return;
+	    	} else {
+	    		player.to_sleep_frame = 0;
+	    		player.sleep = true;
+	    		return;
+	    	}
+	    }
+
+        if (controller.left.active || controller.right.active || controller.up.active) {
+    		player.sleep_frame = 0;
+	    	if (player.sleep) {
+	    		player.from_sleep_frame = 0;
+	    		player.waking = true;
+		    	return;
+	    	}
+        }
 	
 	//locked animations
 	//- turning
@@ -344,11 +439,11 @@
         }
 		
     //-idle transitions
-    if (player.to_from_idle_frame >= 14) {
-        player.idle = !player.idle;
-        player.to_from_idle_frame = 0;
-        player.idle_frame = 0;
-    }
+	    if (player.to_from_idle_frame >= 14) {
+	        player.idle = !player.idle;
+	        player.to_from_idle_frame = 0;
+	        player.idle_frame = 0;
+	    }
 		
 	//- idle
 		var idle_ani_length;
@@ -369,10 +464,10 @@
             }
         }
 		//start idle animation
-        if (!player.idle_ani && player.idle_frame > 300) {
+        if (!player.idle_ani && player.idle_frame > 300 && !player.sleep) {
 			var random = Math.floor(Math.random() * (100 - 1)) + 1;
 			
-			if (random <= 50) {
+			if (random <= 70) {
 				player.idle_ani_type = 1;
 			} else {
 				player.idle_ani_type = 2;
@@ -471,7 +566,7 @@
 		
 
 	//- start/continue still_idle
-        if (!controller.left.active && !controller.right.active && !player.jumping && !player.turning) {
+        if (!controller.left.active && !controller.right.active && !player.jumping && !player.turning && !player.sleep) {
             player.spdX *= 0.9;
             if (player.idle) {
                 if (player.dir == 0) {
@@ -560,7 +655,11 @@
                     [0,1,0,1],          		//8.ear twitch right (idle_1) [8]
                     [2,3,2,3],          		//9.ear twitch left (idle_1) [8] 
                    	[6,5,4,3,2,1,0],			//10.jump left 	[10|12]
-                   	[0,1,2,3,3,4,5,6,7,7,8,9,10,11,12,1,0]],	//11.lick [13|14]
+                   	[0,1,2,3,3,4,5,6,7,7,8,9,10,11,12,1,0],//11.lick [13|14]
+                   	[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],//12.to sleep right [15]
+                   	[0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],//13.sleep right [16]
+                   	[0,1,2,3,4,5,6,7,8,9,10,11,12,13],//14.to sleep left [17]
+                   	[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]],//15.from_sleep_right [18]
 
         image:new Image()
     };
@@ -601,13 +700,7 @@
             }
         }
     };
-	
-function getTouchPos(touchEvent) {
-  return {
-    x: touchEvent.touches[0].clientX,
-    y: touchEvent.touches[0].clientY
-  };
-}
+
 	
 
 //initialize
@@ -618,22 +711,13 @@ function getTouchPos(touchEvent) {
 	window.addEventListener("mousedown", mouseUpDown);
 	window.addEventListener("mouseup", mouseUpDown);
 
-	window.addEventListener("touchstart", function (e) {
-        mousePos = getTouchPos(e);
-		var touch = e.touches[0];
-		var mouseEvent = new MouseEvent("mousedown", {
-		clientX: touch.clientX,
-		clientY: touch.clientY
-	  });
-	  window.dispatchEvent(mouseEvent);
-	}, false);
-	window.addEventListener("touchend", function (e) {
-		var mouseEvent = new MouseEvent("mouseup", {});
-		window.dispatchEvent(mouseEvent);
-	}, false);
+	window.addEventListener("touchstart", touchHandler);
+	window.addEventListener("touchmove", touchHandler);
+	window.addEventListener("touchend", touchHandler);
 	
 
-    var ctx = document.getElementById("ctx").getContext("2d");
+    var canvas = document.getElementById("ctx");
+    var ctx = canvas.getContext("2d");
 	//resizeCanvas();
 
     ctx.font = "16px Arial"
@@ -642,6 +726,8 @@ function getTouchPos(touchEvent) {
     var height = 300;
     var width = 1000;
     var playerList = {};
+
+    var touchList = [];
 
     createPlayer('1','Cat',300,height-100,120,80,0,0,"#d0d0d0");
     //createPlayer('2','Cat2',100,height-100,120,80,4,0,"#707070");
