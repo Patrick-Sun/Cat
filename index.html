@@ -96,21 +96,7 @@
 
     function updatePlayers() {
         for (var key1 in playerList) {
-
-            if (key1 == '1') {
                 updateControlCharacter(playerList[key1]);
-                
-            } else {
-                updateCharacter(playerList[key1]);
-            }
-
-            for (var key2 in playerList) {
-                if (key1 != key2) {
-                    var colliding = checkCollision(playerList[key1], playerList[key2]);
-                    playerList[key1].collide = colliding;
-                    playerList[key2].collide = colliding;
-                }
-            }
         }
     }
 
@@ -137,6 +123,13 @@
 		ctx.moveTo(0, height-42);
 		ctx.lineTo(width, height-42);
 		ctx.stroke();
+
+		//mice shadow
+		for (var mouse in localMouseList) {
+			if (!localMouseList[mouse].collide) {
+			reDrawMiceShadow(localMouseList[mouse]);
+			}
+		}
 
 		//draw shadow
 		ctx.fillStyle = "rgb(240, 240, 240)";
@@ -192,7 +185,7 @@
 		// ctx.fillText("cat_simulator_v".concat(version),width-148,30);
 		// ctx.fillText(playerList['1'].status,width-148,50);
 		ctx.fillText("cat_simulator_v".concat(version),20,30);
-		ctx.fillText("state: " + playerList['1'].status,20,50);
+		ctx.fillText("score: " + playerList['1'].score,20,50);
 		
 		//draw other players
 		ctx.fillStyle = "#707070";
@@ -290,7 +283,8 @@
 			to_sleep_frame:0,
 			from_sleep_frame:0,
 			waking:true,
-			status:"loading..."
+			status:"loading...",
+			score: 0
         };
 
         player.render = function () {
@@ -636,12 +630,248 @@
         }
     }
 
-    function checkCollision(player1, player2) {
-        return (player1.x <= player2.x + player2.width
-            && player2.x <= player1.x + player1.width
-            && player1.y <= player2.y + player2.height
-            && player2.y <= player1.y + player1.height);
-    }
+	function reDrawMice() {
+		for (var mouse in localMouseList) {
+			renderMouse(localMouseList[mouse]);
+		}
+	}
+
+	function renderMouse (mouse) {
+		if (mouse.collide) {
+
+			
+			if (mouse.collideFrame <= 20) {
+			effectRadius = mouse.collideFrame * 2 * 2;
+			ctx.fillStyle = "rgba(255, 120, 120, " + ((40-(mouse.collideFrame * 2))/40) + ")";
+			drawEllipse(ctx, mouse.x + (mouse.width/2) - effectRadius, mouse.y + (mouse.height/2) - effectRadius, effectRadius*2, effectRadius*2);
+			}
+
+
+
+			ctx.strokeStyle = "rgb(60, 60, 60)"
+			ctx.fillStyle = "rgb(60, 60, 60)"
+			roundRect(ctx, mouse.x + 10, mouse.y + 20, 63, 27)
+			ctx.fill();
+			ctx.font = "bold 16px Arial";
+			ctx.fillStyle = "rgb(255, 255, 255)";
+			ctx.fillText("MICE!",mouse.x + 20,mouse.y + 40);
+		} else {
+			ctx.drawImage(
+				sprite_sheet_mice.image,
+				mouse.animation.frame * mouse.width,
+				mouse.animation.frame_group * mouse.height,
+				mouse.width,
+				mouse.height,
+				Math.floor(mouse.x),
+				Math.floor(mouse.y),
+				mouse.width,
+				mouse.height);
+		}
+	};
+	function reDrawMiceShadow(mouse) {
+		//draw shadow
+		ctx.fillStyle = "rgb(240, 240, 240)";
+		if (mouse.dir == 1) {
+			drawEllipse(ctx, mouse.x + 28, height-28, mouse.width - 28, 8);
+		} else {
+			drawEllipse(ctx, mouse.x, height-28, mouse.width - 28, 8);
+		}
+	}
+
+	function createMouse(x,y,width,height,spdX,dir) {
+		var mouse = {
+			x:x,
+			y:y,
+			width:width,
+			height:height,
+			spdX:spdX,
+			jumping:false,
+			collide:false,
+			dir:dir,
+			animation:new Animation(),
+			to_from_idle_frame:0,
+			turning:false,
+			turn_frame:0,
+			idle:false,
+			idle_frame:0,
+			idle_ani:false,
+			idle_ani_frame:0,
+			idle_ani_type:0,
+			status:"loading...",
+			randTurn:false,
+			randIdle:false,
+			collideFrame: 0,
+			kill:false
+		};
+		localMouseList.push(mouse);
+	}
+
+	function updateMice() {
+		for (var mouse in localMouseList) {
+			if (!localMouseList[mouse].collide) {
+				updateMouse(localMouseList[mouse]);
+			}
+		}
+
+		for (var mouse in localMouseList) {
+			if (!localMouseList[mouse].collide) {
+				localMouseList[mouse].animation.update();
+			}
+		}
+	}
+
+	function updateMouse(mouse) {
+    //movement
+        mouse.x += mouse.spdX;
+        mouse.spdX *= 0.9;
+        
+    //bounds
+        if (mouse.x > width) {
+            // mouse.x = -mouse.width;
+            mouse.kill = true;
+        }
+        else if(mouse.x + mouse.width < 0) {
+            // mouse.x = width;
+            mouse.kill = true;
+        }
+    
+        if (!mouse.turning && !mouse.randIdle && !mouse.idle) {
+            if (mouse.dir == 0) {
+                mouse.spdX -= 0.4;
+                mouse.status="walk_left";
+                mouse.animation.change(1,sprite_sheet_mice.frame_sets[2], 3);
+            } else {
+                mouse.spdX += 0.4;
+                mouse.status="walk_right";
+                mouse.animation.change(0,sprite_sheet_mice.frame_sets[1], 3);	
+            }
+        }
+    
+    //locked animations
+    //- turning
+        if (mouse.turning) {
+            if (mouse.turn_frame >= 14) {
+                mouse.turning = false;
+                mouse.turn_frame = 0;
+                // mouse.to_from_idle_frame = 0;
+                // mouse.idle_frame = 0;
+                // mouse.idle = false;
+            } else {
+                mouse.turn_frame += 1;
+                return;
+            }
+        }
+
+        
+    //-idle transitions
+        if (mouse.to_from_idle_frame >= 14) {
+            if (mouse.idle) {
+                mouse.randIdle = false;
+            }
+            mouse.idle = !mouse.idle;
+            mouse.to_from_idle_frame = 0;
+            mouse.idle_frame = 0;
+        }      
+        
+    //unlocked animations
+		if (mouse.randTurn) {
+			mouse.randTurn = false;
+			if (mouse.dir == 1) {
+				mouse.status="turn_left";
+				mouse.turning = true
+				mouse.animation.change(2,sprite_sheet_mice.frame_sets[3], 3);
+				mouse.dir = 0;
+				mouse.spdX = -mouse.spdX
+				return;
+			} else {
+				mouse.status="turn_right";
+				mouse.turning = true
+				mouse.animation.change(3,sprite_sheet_mice.frame_sets[4], 3);
+				mouse.dir = 1;
+				mouse.spdX = -mouse.spdX
+				return;
+			}
+		}
+
+		if (mouse.randIdle) {
+			mouse.spdX *= 0.9;
+			if (mouse.idle) {
+				if (mouse.idle_frame <= 50) {
+					if (mouse.dir == 0) {
+						mouse.animation.change(5,sprite_sheet_mice.frame_sets[0], 15);
+						mouse.status="idle_left";
+						mouse.idle_frame += 1;
+					} else {
+						mouse.animation.change(4,sprite_sheet_mice.frame_sets[0], 15); 
+						mouse.status="idle_right";
+						mouse.idle_frame += 1;
+					}
+				} else {
+					mouse.to_from_idle_frame += 1;
+					if (mouse.dir == 1) {
+						mouse.animation.change(6,sprite_sheet_mice.frame_sets[6], 5);
+						mouse.status="from_idle_right";
+					} else {
+						mouse.animation.change(7,sprite_sheet_mice.frame_sets[5], 5);
+						mouse.status="from_idle_left";
+					}
+					return;
+				}
+			} else {
+				if (mouse.dir == 0) {
+					mouse.to_from_idle_frame += 1;
+					mouse.animation.change(7,sprite_sheet_mice.frame_sets[6], 5);
+					mouse.status="to_idle_left";
+					return;
+				} else {
+					mouse.to_from_idle_frame += 1;
+					mouse.animation.change(6,sprite_sheet_mice.frame_sets[5], 5); 
+					mouse.status="to_idle_right";
+					return;
+				}
+			}
+		}
+	}
+
+	function detectCollision() {
+		var xBuffer = 10
+		var yBuffer = 10;
+
+		var tempMouseList = [];
+		for (player in playerList) {
+			playerList[player].collide = false;
+			for (var i = 0; i < localMouseList.length; i++) {
+				if (((playerList[player].x + xBuffer <= localMouseList[i].x && playerList[player].x + playerList[player].width - xBuffer >= localMouseList[i].x) || (playerList[player].x + xBuffer <= localMouseList[i].x + localMouseList[i].width && playerList[player].x + playerList[player].width - xBuffer >= localMouseList[i].x + localMouseList[i].width) || (playerList[player].x + xBuffer <= localMouseList[i].x && playerList[player].x + playerList[player].width - xBuffer >= localMouseList[i].x + localMouseList[i].width) || (playerList[player].x + xBuffer >= localMouseList[i].x && playerList[player].x + playerList[player].width - xBuffer <= localMouseList[i].x + localMouseList[i].width)) && ((playerList[player].y + yBuffer <= localMouseList[i].y && playerList[player].y + playerList[player].height - yBuffer >= localMouseList[i].y) || (playerList[player].y + yBuffer <= localMouseList[i].y + localMouseList[i].height && playerList[player].y + playerList[player].height - yBuffer >= localMouseList[i].y + localMouseList[i].height) || (playerList[player].y + yBuffer <= localMouseList[i].y && playerList[player].y + playerList[player].height - yBuffer >= localMouseList[i].y + localMouseList[i].height) || (playerList[player].y + yBuffer >= localMouseList[i].y && playerList[player].y + playerList[player].height - yBuffer <= localMouseList[i].y + localMouseList[i].height))) {
+					if (playerList[player].jumping && playerList[player].spdY > 0) {
+						if (!localMouseList[i].collide) {
+							localMouseList[i].collide = true;
+							playerList[player].collide = true;
+							playerList[player].score += 1;
+						}
+					}
+				}
+			}
+		}
+
+		for (var i = 0; i < localMouseList.length; i++) {
+			if (localMouseList[i].collide) {
+				if (localMouseList[i].collideFrame <= 40) {
+					localMouseList[i].collideFrame += 1;
+				} else {
+					localMouseList[i].collideFrame = 0
+					localMouseList[i].kill = true;
+				}    
+			}
+		}
+
+		for (var i = 0; i < localMouseList.length; i++) {
+			
+			if (!localMouseList[i].kill) {
+				tempMouseList.push(localMouseList[i]);
+			}
+		}
+		localMouseList = tempMouseList;
+	}
 
     var sprite_sheet = {
         frame_sets:[[0,1,2,1],                  //0.idle        [4|5]
@@ -663,6 +893,17 @@
 
         image:new Image()
     };
+
+	var sprite_sheet_mice = {
+		frame_sets:[[0,1,2,1],                                                      //0.idle        [4|5]
+					[0,1,2,3,4,5,6,7],                                              //1.walk right  [0]
+					[7,6,5,4,3,2,1,0],                                              //2.walk left   [1]
+					[0,1,2,3,4,4],                                                  //3.turn left   [2]
+					[0,1,2,3,4,4],                                                  //4.turn right  [3]
+					[0,1,2,3,3],                                                    //5.to idle right [6] | from idle left [7]
+					[3,2,1,0,0]],                                                   //6.to idle left [7] | from idle right [6] 
+		image:new Image()                                                      
+	};
 
     var Animation = function(frame_group, frame_set, delay) {
         this.frame_group = frame_group;//Sprite row.
@@ -701,6 +942,38 @@
         }
     };
 
+
+setInterval(function() {
+	if (localMouseList.length < 5) {
+		var random = Math.floor(Math.random() * (100 - 1)) + 1;
+		if (random <= 50) {
+			direction = Math.round(Math.random());
+			if (direction == 1) {
+				createMouse(-80,height-20-50,80,50,4,direction);
+			} else {
+				createMouse(width,height-20-50,80,50,-4,direction);
+			}
+			console.log("Created Mouse");
+		}
+	}
+}, 2000);
+
+setInterval(function() {
+	for (var i = 0; i < localMouseList.length; i++) {
+		var random = Math.floor(Math.random() * (100 - 1)) + 1;
+		if (random <= 10 && !localMouseList[i].randTurn && !localMouseList[i].randIdle) {
+			localMouseList[i].randTurn = true;
+		}
+	}
+}, 500);
+setInterval(function() {
+	for (var i = 0; i < localMouseList.length; i++) {
+		var random = Math.floor(Math.random() * (100 - 1)) + 1;
+		if (random <= 10 && !localMouseList[i].randTurn && !localMouseList[i].randIdle) {
+			localMouseList[i].randIdle = true;
+		}
+	}
+}, 500);
 	
 
 //initialize
@@ -726,6 +999,7 @@
     var height = 300;
     var width = 1000;
     var playerList = {};
+	localMouseList = [];
 
     var touchList = [];
 
@@ -739,11 +1013,14 @@
     function gameLoop () {
         window.requestAnimationFrame(gameLoop);
         updatePlayers();
+		updateMice();
+		detectCollision();
         reDraw();
+		reDrawMice();
     }
 
     sprite_sheet.image.addEventListener("load", gameLoop);
     //sprite_sheet.image.src = "cat_sprite_4.png";
     sprite_sheet.image.src = "cat_sprite_orange.png";
-
+	sprite_sheet_mice.image.src = "mice_sprite_grey.png";
 </script>
